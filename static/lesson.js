@@ -28,6 +28,8 @@
         const bookTitleEl = document.getElementById('book-title');
         const bookImgEl = document.getElementById('book-img');
         const lessonTitleEl = document.getElementById('lesson-title');
+        const loopBtnEl = document.getElementById('loop-btn');
+        const nextBtnEl = document.getElementById('next-btn');
 
         /** 数据结构 */
         const state = {
@@ -36,8 +38,10 @@
             artist: '',
             title: '',
             segmentEnd: 0,
-            activeIdx: -1
+            activeIdx: -1,
+            isSingleLoop: false
         };
+
         audio.src = mp3Src;
         bookImgEl.src = bookImgSrc;
         bookImgEl.alt = book;
@@ -128,11 +132,11 @@
             if (idx === state.activeIdx) return;
             const prev = content.querySelector('.sentence.active');
             if (prev) prev.classList.remove('active');
-            const cur = content.querySelector(`.sentence[data-idx="${idx}"]`);
-            if (cur) {
-                cur.classList.add('active');
-                cur.scrollIntoView({behavior: 'smooth', block: 'center'});
-            }
+			const cur = content.querySelector(`.sentence[data-idx="${idx === -1 ? 0 : idx}"]`);
+			if (cur) {
+				idx !== -1 && cur.classList.add('active');
+				cur.scrollIntoView({behavior: 'smooth', block: 'center'});
+			}
             state.activeIdx = idx;
         }
 
@@ -164,6 +168,67 @@
             );
             if (idx !== -1) highlight(idx);
         });
+
+
+        loopBtnEl.addEventListener('click', () => {
+            state.isSingleLoop = !state.isSingleLoop;
+            loopBtnEl.title = state.isLooping ? '单曲循环' : '列表播放';
+            
+            // 更新按钮图标
+            const svg = loopBtnEl.querySelector('svg');
+            if (state.isSingleLoop) {
+                // 单曲循环图标
+                svg.innerHTML = `
+                    <path d="M507.008 122.752a42.666667 42.666667 0 0 0-30.165333 72.832l17.749333 17.749333H383.317333A298.666667 298.666667 0 0 0 232.533333 769.834667a42.666667 42.666667 0 1 0 44.672-72.149334q-23.808-13.909333-44.714666-34.816Q169.984 600.32 169.984 512q0-88.362667 62.506667-150.869333Q294.954667 298.666667 383.317333 298.666667H597.333333a42.666667 42.666667 0 0 0 30.336-12.586667 42.666667 42.666667 0 0 0 0-60.330667l-12.373333-12.373333h25.301333L639.317333 213.333333h-24.064l-78.08-78.08a42.666667 42.666667 0 0 0-30.165333-12.501333zM937.984 512c0-110.506667-59.946667-206.933333-149.12-258.56a42.666667 42.666667 0 1 0-39.424 75.264q21.589333 13.269333 40.746667 32.426667Q852.650667 423.68 852.650667 512q0 88.362667-62.464 150.869333Q727.68 725.333333 639.317333 725.333333h-209.066666a42.666667 42.666667 0 0 0-33.621334 12.373334l-0.512 0.512a42.666667 42.666667 0 0 0 3.370667 62.677333l87.637333 87.637333a42.666667 42.666667 0 0 0 60.373334-60.330666l-17.536-17.493334h109.354666a298.666667 298.666667 0 0 0 298.666667-298.709333z" p-id="4937"></path>
+                    <path d="M469.333333 597.333333v-170.666666a42.666667 42.666667 0 1 1 85.333334 0v170.666666a42.666667 42.666667 0 0 1-85.333334 0z" p-id="4938"></path>
+                `;
+            } else {
+                // 列表播放图标
+                svg.innerHTML = `
+                    <path d="M721.493333 212.992l0.213334-63.786667a21.418667 21.418667 0 0 1 12.16-19.328 21.077333 21.077333 0 0 1 22.613333 2.901334l174.549333 127.829333a21.333333 21.333333 0 0 1-13.610666 37.717333H85.333333v-85.333333h636.16zM85.333333 810.453333l853.333334-0.213333v85.333333l-853.333334 0.256v-85.333333z m0-298.709333h853.077334v85.333333H85.333333v-85.333333z" p-id="9841"></path>
+                `;
+            }
+        });
+
+        audio.addEventListener('ended', () => {
+            if (state.isSingleLoop) {
+				state.segmentEnd = 0;
+				highlight(-1)
+                audio.play();
+            } else {
+                window.location.href = `lesson.html#NCE${state.nextLesson.book}/${state.nextLesson.lesson}`;
+            }
+        });
+
+        loadData().then((data) => {
+            const [book, lesson] = decodeURIComponent(window.location.href.split("#").pop()).split("/")
+            let bookIndex = book.replace("NCE", "");
+            let lessonIndex = data[bookIndex].findIndex(item => item.filename === lesson);
+            if (lessonIndex === data[bookIndex].length - 1) {
+                bookIndex++;
+                lessonIndex = 0;
+            } else {
+                lessonIndex++;
+            }
+            
+            state.nextLesson = {
+                book: bookIndex,
+                lesson: data[bookIndex][lessonIndex].filename
+            };
+
+            nextBtnEl.disabled = false;
+        })
+
+        nextBtnEl.addEventListener('click', () => {
+            window.location.href = `lesson.html#NCE${state.nextLesson.book}/${state.nextLesson.lesson}`;
+        });
+
+        async function loadData() {
+            const dataSrc = 'static/data.json';
+            const dataRes = await fetch(dataSrc);
+            lessonsData = await dataRes.json();
+            return lessonsData;
+        }
 
         // 初始化
         loadLrc().then(r => {

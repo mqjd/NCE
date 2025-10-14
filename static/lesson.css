@@ -1,74 +1,157 @@
-body{
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
+body {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 #content {
-    scroll-behavior: smooth;
-    flex: 1; /* 让 content 区域占据所有剩余空间 */
-    overflow-y: auto; /* 关键：当内容溢出时，启用垂直滚动 */
-    padding: 10px 5% ;
-    min-height: 0;
+  scroll-behavior: smooth;
+  flex: 1; /* 让 content 区域占据所有剩余空间 */
+  overflow-y: auto; /* 关键：当内容溢出时，启用垂直滚动 */
+  padding: 10px 5%;
+  min-height: 0;
 }
-
-#player {
-    display: block; /* 变为块级元素 */
-    margin: 0 auto; /* 左右自动外边距实现居中 */
-    width: 100%;
-    max-width: 500px;
-}
-
 
 .sentence {
-    background: #333333;
-    color: #aaaaaa;
-    margin: 8px 0;
-    padding: 10px;
-    border-radius: 10px;
-    cursor: pointer;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-    overflow: hidden;
+  background: #333333;
+  color: #aaaaaa;
+  margin: 8px 0;
+  padding: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  overflow: hidden;
 }
 
 .sentence:hover {
-    color: white;
-    transform: translateX(8px);
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+  color: white;
+  transform: translateX(8px);
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
 }
 
 .sentence.active {
-    color: #ffffff;
-    background: #3c45cc; /* 淡黄色高亮 */
-    transform: translateX(8px);
-    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+  color: #ffffff;
+  background: #3c45cc; /* 淡黄色高亮 */
+  transform: translateX(8px);
+  box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
 }
 
 .sentence::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 4px;
-    height: 100%;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    transform: scaleY(0);
-    transition: transform 0.3s ease;
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  transform: scaleY(0);
+  transition: transform 0.3s ease;
 }
 
 .sentence:hover::before {
-    transform: scaleY(1);
+  transform: scaleY(1);
 }
 
-
 .en {
-    font-size: 18px;
-    font-weight: bold;
+  font-size: 18px;
+  font-weight: bold;
 }
 
 .cn {
-    font-size: 12px;
-    color: #b5b5b5;
+  font-size: 12px;
+  color: #b5b5b5;
+}
+
+.audio-controls-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.audio-controls {
+  min-width: 500px;
+  width: 50%;
+  border-radius: 29px;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 100;
+  width: autio;
+}
+
+#player {
+  flex: 1;
+}
+
+/* 针对不同浏览器的audio控件圆角去除 */
+#player::-webkit-media-controls-panel {
+  border-radius: 0 !important;
+  background-color: transparent !important;
+  background: transparent !important;
+}
+
+#player::-webkit-media-controls {
+  border-radius: 0 !important;
+  background-color: transparent !important;
+  background: transparent !important;
+}
+
+#player::-webkit-media-controls-enclosure {
+  border-radius: 0 !important;
+  background-color: transparent !important;
+  background: transparent !important;
+}
+
+/* Firefox */
+#player::-moz-media-controls {
+  border-radius: 0 !important;
+  background-color: transparent !important;
+  background: transparent !important;
+}
+
+/* 通用样式 */
+audio {
+  border-radius: 0 !important;
+  background-color: transparent !important;
+  background: transparent !important;
+}
+
+.action-button {
+  background-color: transparent;
+  border: none;
+  border-radius: 0 10px 10px 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+}
+
+.action-button:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 50%;
+}
+
+.action-button svg:hover {
+  fill: #333;
+}
+
+.action-button svg {
+  width: 18px;
+  height: 18px;
+  fill: black;
+}
+
+.extra-control {
+  position: relative;
+  left: -10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
