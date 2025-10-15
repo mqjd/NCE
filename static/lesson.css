@@ -128,8 +128,8 @@ audio {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 14px;
+  height: 14px;
   flex-shrink: 0;
 }
 
@@ -154,4 +154,9 @@ audio {
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 10px;
+}
+
+.action-button.prev {
+  rotate: 180deg;
 }

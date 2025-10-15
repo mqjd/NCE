@@ -30,6 +30,7 @@
         const lessonTitleEl = document.getElementById('lesson-title');
         const loopBtnEl = document.getElementById('loop-btn');
         const nextBtnEl = document.getElementById('next-btn');
+        const prevBtnEl = document.getElementById('prev-btn');
 
         /** 数据结构 */
         const state = {
@@ -39,7 +40,9 @@
             title: '',
             segmentEnd: 0,
             activeIdx: -1,
-            isSingleLoop: false
+            isSingleLoop: false,
+            nextLesson: null,
+            prevLesson: null,
         };
 
         audio.src = mp3Src;
@@ -196,7 +199,7 @@
 				highlight(-1)
                 audio.play();
             } else {
-                window.location.href = `lesson.html#NCE${state.nextLesson.book}/${state.nextLesson.lesson}`;
+                window.location.href = `lesson.html#NCE${state.nextLesson.book}/${encodeURIComponent(state.nextLesson.lesson)}`;
             }
         });
 
@@ -220,7 +223,8 @@
         })
 
         nextBtnEl.addEventListener('click', () => {
-            window.location.href = `lesson.html#NCE${state.nextLesson.book}/${state.nextLesson.lesson}`;
+            window.location.href = window.location.href.split("#").shift() + `#NCE${state.nextLesson.book}/${encodeURIComponent(state.nextLesson.lesson)}`;
+            location.reload();
         });
 
         async function loadData() {
